@@ -1,0 +1,100 @@
+Starting sync at 2025-04-07 13:21:31
+Connected to logger DB
+Error at 2025-04-07 13:21:31: Unknown column 'collector_id' in 'field list'
+Starting sync at 2025-04-07 13:23:01
+Connected to logger DB
+Error at 2025-04-07 13:23:01: Unknown column 'collector_id' in 'field list'
+Starting sync at 2025-04-07 13:23:46
+Connected to logger DB
+Last ID for collector 1: 171
+Connecting to collector 1 at 192.168.0.39
+Connected to collector 1
+Found 9 new logs from collector 1
+Inserting ID=172 from collector 1: EVENT=system, PATH=[Local to share][Local Copy 1] Failed to run backup task., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=173 from collector 1: EVENT=system, PATH=[Local to share][Local Copy 2] Backup task started., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=174 from collector 1: EVENT=system, PATH=[Local to share][Local Copy 2] Failed to backup data., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=175 from collector 1: EVENT=system, PATH=[Local to share][Local Copy 2] Failed to run backup task., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=176 from collector 1: EVENT=system, PATH=System successfully registered [112.134.219.189] to [cont.synology.me] in DDNS server [Synology]., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=177 from collector 1: EVENT=system, PATH=Package [Diagnosis Tool] has been successfully installed., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=178 from collector 1: EVENT=, PATH=, FILE_FOLDER=, SIZE=, USER=, IP=, CATEGORY=Unknown
+Inserting ID=179 from collector 1: EVENT=, PATH=, FILE_FOLDER=, SIZE=, USER=, IP=, CATEGORY=Unknown
+Inserting ID=180 from collector 1: EVENT=system, PATH=Package [Diagnosis Tool] has been successfully uninstalled., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Committed 9 rows for collector 1
+Sync completed, total rows inserted: 9
+Starting sync at 2025-04-07 13:42:36
+Connected to logger DB
+Last ID for collector 1: 180
+Connecting to collector 1 at 192.168.0.39
+Connected to collector 1
+No new logs from collector 1.
+Sync completed, total rows inserted: 0
+Starting sync at 2025-04-07 13:45:10
+Connected to logger DB
+Last ID for collector 1: 180
+Connecting to collector 1 at 192.168.0.39
+Connected to collector 1
+Found 1 new logs from collector 1
+Inserting ID=181 from collector 1: EVENT=test, PATH=, FILE_FOLDER=, SIZE=, USER=Synology Syslog Client, IP=112.134.219.189, CATEGORY=Test-msg
+Committed 1 rows for collector 1
+Sync completed, total rows inserted: 1
+Starting sync at 2025-04-08 06:27:19
+Connected to logger DB
+Last ID for collector 1: 181
+Connecting to collector 1 at 192.168.0.39
+Connected to collector 1
+Found 21 new logs from collector 1
+Inserting ID=182 from collector 1: EVENT=system, PATH=System start counting down to shutdown. This is triggered by Power Schedule., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=183 from collector 1: EVENT=system, PATH=Skipped scheduled shutdown task due to processing the following tasks: [Active Backup for Business is performing backup or restore tasks], FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=184 from collector 1: EVENT=system, PATH=Failed to update package [Mail Station]., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=185 from collector 1: EVENT=system, PATH=[Google Drive][Google Drive 1] Backup task started., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=186 from collector 1: EVENT=system, PATH=[Google Drive][Google Drive 1] Backup task finished successfully. [790 files scanned] [6 files modified] [784 files unchanged], FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=187 from collector 1: EVENT=system, PATH=[Google Drive 1] Trigger version rotation., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=188 from collector 1: EVENT=system, PATH=[Google Drive 1] Version rotation started from ID [Active-Com_1.hbk]., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=189 from collector 1: EVENT=system, PATH=[Google Drive 1] Rotate version [2024-07-06 23:32:20] from ID [Active-Com_1.hbk]., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=190 from collector 1: EVENT=system, PATH=[Google Drive 1] Version rotation completed from ID [Active-Com_1.hbk]., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=191 from collector 1: EVENT=system, PATH=[Network][Synology NAS 1] Failed to start backup task. (The backup service is not available. Please check protocol is enabled at the destination), FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=192 from collector 1: EVENT=system, PATH=[Network][Synology NAS 1] Failed to run backup task., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=193 from collector 1: EVENT=system, PATH=[Local to share][Local Copy 1] Backup task started., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=194 from collector 1: EVENT=system, PATH=[Local to share][Local Copy 1] Failed to access the backup destination. (The backup destination shared folder does not exist. Please check if the shared folder does exist or it is plug to the DiskStation correctly if it is a portable device.), FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=195 from collector 1: EVENT=system, PATH=[Local to share][Local Copy 1] Failed to run backup task., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=196 from collector 1: EVENT=system, PATH=[Local to share][Local Copy 2] Backup task started., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=197 from collector 1: EVENT=system, PATH=[Local to share][Local Copy 2] Failed to backup data., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=198 from collector 1: EVENT=system, PATH=[Local to share][Local Copy 2] Failed to run backup task., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=199 from collector 1: EVENT=system, PATH=[Local to share][Backup testing] Backup task started., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=200 from collector 1: EVENT=system, PATH=[Local to share][Backup testing] Failed to backup data., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=201 from collector 1: EVENT=system, PATH=[Local to share][Backup testing] Failed to run backup task., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Inserting ID=202 from collector 1: EVENT=system, PATH=System successfully registered [112.134.219.189] to [cont.synology.me] in DDNS server [Synology]., FILE_FOLDER=, SIZE=, USER= SYSTEM, IP=, CATEGORY=Test-msg
+Committed 21 rows for collector 1
+Sync completed, total rows inserted: 21
+Starting sync at 2025-04-08 06:27:25
+Connected to logger DB
+Last ID for collector 1: 202
+Connecting to collector 1 at 192.168.0.39
+Connected to collector 1
+No new logs from collector 1.
+Sync completed, total rows inserted: 0
+Starting sync at 2025-04-08 13:21:13
+Connected to logger DB
+Last ID for collector 1: 202
+Connecting to collector 1 at 192.168.0.39
+Connected to collector 1
+Found 8 new logs from collector 1
+Inserting ID=203 from collector 1: EVENT=sign-in, PATH=DSM, FILE_FOLDER=password, SIZE=, USER=Active, IP=192.168.0.125, CATEGORY=Sign-in
+Inserting ID=204 from collector 1: EVENT=system, PATH=System starts to remove [Storage Pool 3]., FILE_FOLDER=, SIZE=, USER= Active, IP=, CATEGORY=Test-msg
+Inserting ID=205 from collector 1: EVENT=system, PATH=Metadata of shared folder [Alpha] was deleted., FILE_FOLDER=, SIZE=, USER= Active, IP=, CATEGORY=Test-msg
+Inserting ID=206 from collector 1: EVENT=system, PATH=System successfully removed [Storage Pool 3]., FILE_FOLDER=, SIZE=, USER= Active, IP=, CATEGORY=Test-msg
+Inserting ID=207 from collector 1: EVENT=test, PATH=, FILE_FOLDER=, SIZE=, USER=Synology Syslog Client, IP=112.134.219.189, CATEGORY=Test-msg
+Inserting ID=208 from collector 1: EVENT=test, PATH=, FILE_FOLDER=, SIZE=, USER=Synology Syslog Client, IP=112.134.219.189, CATEGORY=Test-msg
+Inserting ID=209 from collector 1: EVENT=, PATH=, FILE_FOLDER=, SIZE=, USER=, IP=, CATEGORY=Unknown
+Inserting ID=210 from collector 1: EVENT=delete, PATH=/RsyslogTest/test1/test2, FILE_FOLDER=Folder, SIZE=NA, USER=Active, IP=192.168.0.34, CATEGORY=Ev-Delete
+Committed 8 rows for collector 1
+Sync completed, total rows inserted: 8
+Starting sync at 2025-04-08 13:22:29
+Connected to logger DB
+Last ID for collector 1: 210
+Connecting to collector 1 at 192.168.0.39
+Connected to collector 1
+No new logs from collector 1.
+Sync completed, total rows inserted: 0
+Starting sync at 2025-06-17 13:00:58
+Error at 2025-06-17 13:00:58: Access denied for user 'root'@'localhost' (using password: NO)
