@@ -2,8 +2,8 @@
 header('Content-Type: application/json');
 
 $servername = "localhost";
-$username = "logger_user";
-$password = "logger_password";
+$username = "root";
+$password = "";
 $dbname = "logger_db";
 
 try {
