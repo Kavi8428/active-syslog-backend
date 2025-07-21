@@ -1,5 +1,5 @@
 <?php
-require '/var/www/html/syslog/db_config.php';
+require '/var/www/html/db_config.php';
 require 'rules.php';
 
 try {
@@ -7,10 +7,10 @@ try {
     if (!file_exists('logs/')) {
         mkdir('logs/', 0777, true);
     }
-    file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Starting sync at " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
+    file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Starting sync at " . date('Y-m-d H:i:s') . "\n", FILE_APPEND);
 
     $logger_conn = connect_db($logger_db);
-    file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Connected to logger DB\n", FILE_APPEND);
+    file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Connected to logger DB\n", FILE_APPEND);
 
     // Fetch all active collectors
     $collectors = [];
@@ -25,7 +25,7 @@ try {
     }
 
     if (empty($collectors)) {
-        file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "No active collectors found.\n", FILE_APPEND);
+        file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "No active collectors found.\n", FILE_APPEND);
         echo "No active collectors found.";
         exit;
     }
@@ -41,12 +41,12 @@ try {
         $result = $stmt->get_result();
         $row = $result->fetch_assoc();
         $last_id = $row['last_id'] !== null ? (int)$row['last_id'] : 0;
-        file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Last ID for collector $collector_id: $last_id\n", FILE_APPEND);
+        file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Last ID for collector $collector_id: $last_id\n", FILE_APPEND);
 
         // Connect to the collector
-        file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Connecting to collector $collector_id at {$collector['host']}\n", FILE_APPEND);
+        file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Connecting to collector $collector_id at {$collector['host']}\n", FILE_APPEND);
         $collector_conn = connect_db($collector);
-        file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Connected to collector $collector_id\n", FILE_APPEND);
+        file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Connected to collector $collector_id\n", FILE_APPEND);
 
         // Fetch new logs from this collector
         $query = "SELECT id, received_at, hostname, facility, message 
@@ -59,12 +59,12 @@ try {
         $result = $stmt->get_result();
 
         if (!$result || $result->num_rows === 0) {
-            file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "No new logs from collector $collector_id.\n", FILE_APPEND);
+            file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "No new logs from collector $collector_id.\n", FILE_APPEND);
             $collector_conn->close();
             continue;
         }
 
-        file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Found " . $result->num_rows . " new logs from collector $collector_id\n", FILE_APPEND);
+        file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Found " . $result->num_rows . " new logs from collector $collector_id\n", FILE_APPEND);
 
         // Prepare insert statement for log_mirror
         $insert_query = "INSERT IGNORE INTO log_mirror 
@@ -79,6 +79,7 @@ try {
         // Prepare statements for devices table
         $device_select = $logger_conn->prepare("SELECT id FROM devices WHERE host_name = ?");
         $device_insert = $logger_conn->prepare("INSERT INTO devices (host_name, status, ip, port, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW())");
+
         // Prepare statements for users table
         $user_select = $logger_conn->prepare("SELECT id FROM users WHERE name = ?");
         $user_insert = $logger_conn->prepare("INSERT INTO users (name, ip, created_at, updated_at) VALUES (?, ?, NOW(), NOW())");
@@ -103,7 +104,6 @@ try {
             $category = $fields['category'];
 
             // Step 1: Handle device (hostname)
-            // Step 1: Handle device (hostname)
             $device_id = null;
             if (!empty($hostname)) {
                 $device_select->bind_param("s", $hostname);
@@ -115,11 +115,9 @@ try {
                     file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Found device ID=$device_id for hostname=$hostname\n", FILE_APPEND);
                 } else {
                     $device_ip = !empty($ip) ? $ip : $collector['host']; // Use log's ip or collector's IP
-                    $device_port = null; // Set port to NULL (or 0 if required)
-                    $device_insert->bind_param("sssii", $hostname, $status, $device_ip, $created_at, $updated_at);
+                    $device_port = null; // Set port to NULL (schema allows NULL)
                     $status = 'active';
-                    $created_at = date('Y-m-d H:i:s');
-                    $updated_at = date('Y-m-d H:i:s');
+                    $device_insert->bind_param("ssss", $hostname, $status, $device_ip, $device_port);
                     if ($device_insert->execute()) {
                         $device_id = $logger_conn->insert_id;
                         file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Inserted new device ID=$device_id for hostname=$hostname, ip=$device_ip\n", FILE_APPEND);
@@ -128,6 +126,7 @@ try {
                     }
                 }
             }
+
             // Step 2: Handle user (name and ip)
             $user_id = null;
             if (!empty($user) && !empty($ip)) {
@@ -137,40 +136,40 @@ try {
                 if ($user_result->num_rows > 0) {
                     $user_row = $user_result->fetch_assoc();
                     $user_id = $user_row['id'];
-                    file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Found user ID=$user_id for name=$user\n", FILE_APPEND);
+                    file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Found user ID=$user_id for name=$user\n", FILE_APPEND);
                 } else {
-                    $user_insert->bind_param("s", $user);
+                    $user_insert->bind_param("ss", $user, $ip);
                     if ($user_insert->execute()) {
                         $user_id = $logger_conn->insert_id;
-                        file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Inserted new user ID=$user_id for name=$user, ip=$ip\n", FILE_APPEND);
+                        file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Inserted new user ID=$user_id for name=$user, ip=$ip\n", FILE_APPEND);
                     } else {
-                        file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Failed to insert user for name=$user, ip=$ip: {$user_insert->error}\n", FILE_APPEND);
+                        file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Failed to insert user for name=$user, ip=$ip: {$user_insert->error}\n", FILE_APPEND);
                     }
                 }
             }
 
             // Step 3: Insert into log_mirror
             if ($device_id !== null && $user_id !== null) {
-                file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Inserting ID=$id from collector $collector_id: DEVICE_ID=$device_id, EVENT=$event, PATH=$path, FILE_FOLDER=$file_folder, SIZE=$size, USER_ID=$user_id, IP=$ip, CATEGORY=$category\n", FILE_APPEND);
+                file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Inserting ID=$id from collector $collector_id: DEVICE_ID=$device_id, EVENT=$event, PATH=$path, FILE_FOLDER=$file_folder, SIZE=$size, USER_ID=$user_id, IP=$ip, CATEGORY=$category\n", FILE_APPEND);
 
                 $stmt_insert->bind_param("iisssssssssss", $id, $collector_id, $received_at, $device_id, $facility, $event, $path, $file_folder, $size, $user_id, $ip, $message, $category);
                 if ($stmt_insert->execute()) {
                     $rows_inserted++;
                 } else {
-                    file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Skipped ID=$id due to duplicate or error: {$stmt_insert->error}\n", FILE_APPEND);
+                    file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Skipped ID=$id due to duplicate or error: {$stmt_insert->error}\n", FILE_APPEND);
                 }
             } else {
-                file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Skipped ID=$id due to missing device_id or user_id\n", FILE_APPEND);
+                file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Skipped ID=$id due to missing device_id or user_id\n", FILE_APPEND);
             }
         }
 
         if ($rows_inserted > 0) {
             $logger_conn->commit();
             $total_rows_inserted += $rows_inserted;
-            file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Committed $rows_inserted rows for collector $collector_id\n", FILE_APPEND);
+            file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Committed $rows_inserted rows for collector $collector_id\n", FILE_APPEND);
         } else {
             $logger_conn->rollback();
-            file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "No rows inserted for collector $collector_id, rolled back\n", FILE_APPEND);
+            file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "No rows inserted for collector $collector_id, rolled back\n", FILE_APPEND);
         }
 
         // Close prepared statements
@@ -184,8 +183,9 @@ try {
     }
 
     $logger_conn->close();
-    file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Sync completed, total rows inserted: $total_rows_inserted\n", FILE_APPEND);
+    file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Sync completed, total rows inserted: $total_rows_inserted\n", FILE_APPEND);
     echo "Logs synchronized successfully from all collectors! Total rows: $total_rows_inserted";
+
 } catch (Exception $e) {
     if (isset($logger_conn) && $logger_conn->ping()) {
         $logger_conn->rollback();
@@ -193,6 +193,7 @@ try {
     }
     $error_msg = "Error at " . date('Y-m-d H:i:s') . ": " . $e->getMessage();
     error_log($error_msg);
-    file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "$error_msg\n", FILE_APPEND);
+    file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "$error_msg\n", FILE_APPEND);
     echo "An error occurred. Check logs.";
 }
+?>
