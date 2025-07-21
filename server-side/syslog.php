@@ -78,8 +78,7 @@ try {
 
         // Prepare statements for devices table
         $device_select = $logger_conn->prepare("SELECT id FROM devices WHERE host_name = ?");
-        $device_insert = $logger_conn->prepare("INSERT INTO devices (host_name, status, created_at, updated_at) VALUES (?, 'active', NOW(), NOW())");
-
+        $device_insert = $logger_conn->prepare("INSERT INTO devices (host_name, status, ip, port, created_at, updated_at) VALUES (?, ?, ?, ?, NOW(), NOW())");
         // Prepare statements for users table
         $user_select = $logger_conn->prepare("SELECT id FROM users WHERE name = ?");
         $user_insert = $logger_conn->prepare("INSERT INTO users (name, ip, created_at, updated_at) VALUES (?, ?, NOW(), NOW())");
@@ -104,6 +103,7 @@ try {
             $category = $fields['category'];
 
             // Step 1: Handle device (hostname)
+            // Step 1: Handle device (hostname)
             $device_id = null;
             if (!empty($hostname)) {
                 $device_select->bind_param("s", $hostname);
@@ -112,18 +112,22 @@ try {
                 if ($device_result->num_rows > 0) {
                     $device_row = $device_result->fetch_assoc();
                     $device_id = $device_row['id'];
-                    file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Found device ID=$device_id for hostname=$hostname\n", FILE_APPEND);
+                    file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Found device ID=$device_id for hostname=$hostname\n", FILE_APPEND);
                 } else {
-                    $device_insert->bind_param("s", $hostname);
+                    $device_ip = !empty($ip) ? $ip : $collector['host']; // Use log's ip or collector's IP
+                    $device_port = null; // Set port to NULL (or 0 if required)
+                    $device_insert->bind_param("sssii", $hostname, $status, $device_ip, $created_at, $updated_at);
+                    $status = 'active';
+                    $created_at = date('Y-m-d H:i:s');
+                    $updated_at = date('Y-m-d H:i:s');
                     if ($device_insert->execute()) {
                         $device_id = $logger_conn->insert_id;
-                        file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Inserted new device ID=$device_id for hostname=$hostname\n", FILE_APPEND);
+                        file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Inserted new device ID=$device_id for hostname=$hostname, ip=$device_ip\n", FILE_APPEND);
                     } else {
-                        file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Failed to insert device for hostname=$hostname: {$device_insert->error}\n", FILE_APPEND);
+                        file_put_contents('/var/www/html/server-side/logs/syslog_sync.log', "Failed to insert device for hostname=$hostname: {$device_insert->error}\n", FILE_APPEND);
                     }
                 }
             }
-
             // Step 2: Handle user (name and ip)
             $user_id = null;
             if (!empty($user) && !empty($ip)) {
@@ -182,7 +186,6 @@ try {
     $logger_conn->close();
     file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "Sync completed, total rows inserted: $total_rows_inserted\n", FILE_APPEND);
     echo "Logs synchronized successfully from all collectors! Total rows: $total_rows_inserted";
-
 } catch (Exception $e) {
     if (isset($logger_conn) && $logger_conn->ping()) {
         $logger_conn->rollback();
@@ -193,4 +196,3 @@ try {
     file_put_contents('/var/www/html/syslog/server-side/logs/syslog_sync.log', "$error_msg\n", FILE_APPEND);
     echo "An error occurred. Check logs.";
 }
-?>
